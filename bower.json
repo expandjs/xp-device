@@ -1,0 +1,23 @@
+{
+  "name": "xp-device",
+  "license": "BSD-3-Clause",
+  "version": "0.8.0",
+  "description": "This component is used to know which device the user is using.",
+  "authors": [
+    "Giuliano Rullo <g.rullo@expandjs.com>",
+    "Maurizio Stefàno <m.stefano@expandjs.com>",
+    "Robert Manolea <r.manolea@expandjs.com>"
+  ],
+  "main": [
+    "xp-device.html"
+  ],
+  "keywords": [
+    "web-components"
+  ],
+  "dependencies": {
+    "expandjs": "ExpandJS/expandjs",
+    "xp-cookie": "ExpandJS/xp-cookie",
+    "xp-script": "ExpandJS/xp-script",
+    "polymer": "Polymer/polymer#^0.5"
+  }
+}
