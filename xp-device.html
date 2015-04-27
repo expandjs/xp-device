@@ -33,8 +33,8 @@ The `device` and `mobile` attributes is set also on the frame's html tag.
                 display: none !important;
             }
         </style>
-        <xp-cookie id="xpDeviceCookie" name="XPDevice" expires="01/01/9999" on-xp-cookie-change="{{handleCookie}}"></xp-cookie>
-        <xp-script id="xpDeviceScript" on-xp-script-load="{{handleLoad}}" on-xp-script-state="{{handleState}}"></xp-script>
+        <xp-cookie id="xpDeviceCookie" name="XPDevice" expires="01/01/9999" on-xp-cookie-change="{{handleChange}}" on-xp-cookie-load="{{handleCookie}}"></xp-cookie>
+        <xp-script id="xpDeviceScript" on-xp-script-load="{{handleScript}}" on-xp-script-state="{{handleState}}"></xp-script>
     </template>
 
     <script>
@@ -49,21 +49,6 @@ The `device` and `mobile` attributes is set also on the frame's html tag.
              * @param {boolean} mobile
              * @bubbles
              */
-
-            /*********************************************************************/
-
-            /**
-             * Initializes the element.
-             *
-             * @method initialize
-             * @returns {Element}
-             * @private
-             */
-            initialize: function () {
-                var self = this;
-                if (self.script.state === "idle") { self.$.xpDeviceScript.src = '//wurfl.io/wurfl.js'; }
-                return self;
-            },
 
             /*********************************************************************/
 
@@ -115,37 +100,25 @@ The `device` and `mobile` attributes is set also on the frame's html tag.
 
             // LISTENER
             ready: function () {
-                var self = this;
-                self.instances.push(self);
-                self.initialize();
+                this.instances.push(this);
             },
 
             /*********************************************************************/
 
             // HANDLER
-            handleCookie: function (event) {
-
-                // Vars
-                var self = this,
-                    root = XP.getElement('html'),
-                    json = JSON.parse(event.detail.value);
-
-                // Setting
-                XP.setAttribute(root, 'device', self.type = json.type);
-                XP.setAttribute(root, 'mobile', self.mobile = json.mobile);
+            handleChange: function (event) {
+                var self = this, json = JSON.parse(event.detail.value);
+                XP.setAttributes(XP.getElement('html'), {device: self.type = json.type, mobile: self.mobile = json.mobile});
             },
 
             // HANDLER
-            handleLoad: function () {
+            handleCookie: function (event) {
+                if (!event.detail.value && this.script.state === 'idle') { this.$.xpDeviceScript.src = '//wurfl.io/wurfl.js'; }
+            },
 
-                // Vars
-                var self = this;
-
-                // Setting
-                self.mobile = WURFL.is_mobile;
-                self.type   = XP.kebabCase(WURFL.form_factor);
-
-                // Writing
+            // HANDLER
+            handleScript: function () {
+                var self = XP.assign(this, {mobile: WURFL.is_mobile, type: XP.kebabCase(WURFL.form_factor)});
                 self.$.xpDeviceCookie.setValue(XP.toJSON({mobile: self.mobile, type: self.type}));
             },
 
