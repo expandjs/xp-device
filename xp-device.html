@@ -154,8 +154,11 @@ The `device` and `mobile` attributes is set also on the frame's html tag.
                 this.script.state = event.detail.state;
             }
         });
+
+        // Listening
+        Polymer.whenReady(function () {
+            XP.prependChild(XP.getElement('body'), XP.createElement('xp-device'));
+        });
     </script>
 
 </polymer-element>
-
-<xp-device></xp-device>
