@@ -1,7 +1,7 @@
 {
   "name": "xp-device",
   "license": "BSD-3-Clause",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "description": "Custom element able to recognize the user's device.",
   "homepage": "http://www.expandjs.com/elements/xp-device",
   "authors": [
