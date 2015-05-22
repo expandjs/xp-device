@@ -18,13 +18,11 @@ The `device` and `mobile` attributes is set also on the frame's html tag.
 
 @dependency polymer Polymer/polymer#^0.5
 @dependency expandjs ExpandJS/expandjs
-@dependency xp-cookie ExpandJS/xp-cookie
 @dependency xp-script ExpandJS/xp-script
 -->
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../expandjs/expandjs.html">
-<link rel="import" href="../xp-cookie/xp-cookie.html">
 <link rel="import" href="../xp-script/xp-script.html">
 
 <polymer-element name="xp-device" attributes="mobile type">
@@ -35,7 +33,6 @@ The `device` and `mobile` attributes is set also on the frame's html tag.
                 display: none !important;
             }
         </style>
-        <xp-cookie id="xpDeviceCookie" name="XPDevice" expires="01/01/9999" on-xp-cookie-change="{{handleChange}}" on-xp-cookie-load="{{handleCookie}}"></xp-cookie>
         <xp-script id="xpDeviceScript" on-xp-script-load="{{handleScript}}" on-xp-script-state="{{handleState}}"></xp-script>
     </template>
 
@@ -53,6 +50,11 @@ The `device` and `mobile` attributes is set also on the frame's html tag.
              */
 
             /*********************************************************************/
+
+            // OBSERVE
+            observe: {
+                'script.state': 'stateObserver'
+            },
 
             // PUBLISH
             publish: {
@@ -100,28 +102,42 @@ The `device` and `mobile` attributes is set also on the frame's html tag.
 
             /*********************************************************************/
 
+            // OBSERVER
+            stateObserver: function (pre, post) {
+                if (post !== 'loaded' || !window.localStorage) { XP.assign(this, JSON.parse(localStorage.getItem('device'))); }
+            },
+
+            // OBSERVER
+            typeChanged: function (pre, post) {
+                XP.setAttributes(XP.getElement('html'), {device: post, mobile: this.mobile});
+            },
+
+            /*********************************************************************/
+
             // LISTENER
             ready: function () {
-                this.instances.push(this);
+
+                // Vars
+                var self   = this,
+                    item   = window.localStorage ? localStorage.getItem('device') : null,
+                    device = item && JSON.parse(item);
+
+                // Setting
+                XP.assign(self, device);
+
+                // Pushing
+                self.instances.push(self);
+
+                // Requesting
+                if (self.script.state === 'idle' && !device) { self.$.xpDeviceScript.src = '//wurfl.io/wurfl.js'; }
             },
 
             /*********************************************************************/
 
             // HANDLER
-            handleChange: function (event) {
-                var self = this, json = JSON.parse(event.detail.value);
-                XP.setAttributes(XP.getElement('html'), {device: self.type = json.type, mobile: self.mobile = json.mobile});
-            },
-
-            // HANDLER
-            handleCookie: function (event) {
-                if (!event.detail.value && this.script.state === 'idle') { this.$.xpDeviceScript.src = '//wurfl.io/wurfl.js'; }
-            },
-
-            // HANDLER
             handleScript: function () {
                 var self = XP.assign(this, {mobile: WURFL.is_mobile, type: XP.kebabCase(WURFL.form_factor)});
-                self.$.xpDeviceCookie.setValue(XP.toJSON({mobile: self.mobile, type: self.type}));
+                if (window.localStorage) { localStorage.setItem('device', JSON.stringify({mobile: self.mobile, type: self.type})); }
             },
 
             // HANDLER

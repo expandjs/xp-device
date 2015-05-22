@@ -25,7 +25,6 @@
   ],
   "dependencies": {
     "expandjs": "ExpandJS/expandjs",
-    "xp-cookie": "ExpandJS/xp-cookie",
     "xp-script": "ExpandJS/xp-script",
     "polymer": "Polymer/polymer#^0.5"
   }
