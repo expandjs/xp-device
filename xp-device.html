@@ -16,9 +16,9 @@ The `device` and `mobile` attributes are also set on the frame's html tag.
 @group functionality
 @homepage http://expandjs.com/elements/xp-device
 
-@dependency polymer Polymer/polymer
-@dependency expandjs ExpandJS/expandjs
-@dependency xp-script ExpandJS/xp-script
+@dependency polymer Polymer/polymer#^1.0.4
+@dependency expandjs ExpandJS/expandjs#0.9.1
+@dependency xp-script ExpandJS/xp-script#0.9.1
 -->
 
 <link rel="import" href="../polymer/polymer.html">
@@ -138,15 +138,18 @@ The `device` and `mobile` attributes are also set on the frame's html tag.
                         item   = window.localStorage ? localStorage.getItem('device') : null,
                         device = item && JSON.parse(item);
 
-                    // Setting
-                    self._setMobile(device.mobile);
-                    self._setType(device.type);
-
                     // Pushing
                     self.push('instances', self);
 
                     // Requesting
-                    if (scriptState === 'idle' && !device) { self.$.xpDeviceScript.src = '//wurfl.io/wurfl.js'; }
+                    if (!device && scriptState === 'idle') { self.$.xpDeviceScript.src = '//wurfl.io/wurfl.js'; }
+
+                    // Checking
+                    if (!device) { return; }
+
+                    // Setting
+                    self._setMobile(device.mobile);
+                    self._setType(device.type);
                 },
 
                 /*********************************************************************/
