@@ -2,6 +2,7 @@
   "name": "xp-device",
   "license": "BSD-3-Clause",
   "version": "0.9.6",
+  "main": "xp-device.html",
   "description": "A custom element able to recognize the user's device",
   "homepage": "http://expandjs.com/elements/xp-device",
   "authors": [
@@ -14,9 +15,6 @@
     "html5",
     "expandjs",
     "web-components"
-  ],
-  "main": [
-    "xp-device.html"
   ],
   "ignore": [
     "**/.*"
